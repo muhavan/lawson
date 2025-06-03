@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAWSON - Scheduling</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!--Favicon-->
+    <link rel="icon" href="/images/favicon.ico" type="icon">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="/images/lawson_text.png" alt="LAWSON Logo">
+                    <p>Sistem Penjadwalan Karyawan</p>
+                </div>
+                <div class="login-form">
+                    <div class="form-group">
+                        <label for="employeeId">ID Karyawan</label>
+                        <input type="text" id="employeeId" placeholder="Masukkan ID Karyawan" value="ADM01">
+                        <small>Demo: ADM01, ADM02, ADM03, ADM04, ADM05, ADM06</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Masukkan Password" value="admin">
+                        <small>Password untuk semua akun: admin</small>
+                    </div>
+                    <button class="btn-primary" id="loginButton">
+                        <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>
+                        Masuk ke Dashboard
+                    </button>
+                    <div class="forgot-password">
+                        Lupa password? <span>Hubungi Administrator</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="screen">
+        <div class="app-container">
+            <!-- Desktop Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-logo">
+                        <img src="/images/lawson.png" alt="LAWSON Logo">
+                        <div>
+                            <div class="sidebar-title">LAWSON</div>
+                            <div class="sidebar-subtitle">Scheduling</div>
+                        </div>
+                    </div>
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="sidebar-nav-item active" data-tab="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="sidebar-nav-item" data-tab="schedule">
+                        <i class="fas fa-calendar"></i>
+                        <span>Jadwal Kerja</span>
+                    </div>
+                    <div class="sidebar-nav-item" data-tab="profile">
+                        <i class="fas fa-user"></i>
+                        <span>Profil Karyawan</span>
+                    </div>
+                    <div class="sidebar-nav-item" data-tab="employees">
+                        <i class="fas fa-users"></i>
+                        <span>Daftar Karyawan</span>
+                    </div>
+                    <div class="sidebar-nav-item" data-tab="reports">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Laporan</span>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content" id="mainContent">
+                <!-- Desktop Top Bar -->
+                <div class="desktop-topbar" id="desktopTopbar">
+                    <h1 class="topbar-title" id="topbarTitle">Dashboard</h1>
+                    <div class="topbar-actions">
+                        <div class="notification-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="topbar-user">
+                            <div class="topbar-avatar">BS</div>
+                            <div class="topbar-user-info">
+                                <h4>Budi Santoso</h4>
+                                <p>Kasir Senior</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Header -->
+                <div class="header" id="mobileHeader">
+                    <div class="header-left">
+                        <div class="header-logo">
+                            <img src="/images/lawson.png" alt="LAWSON Logo">
+                        </div>
+                        <div class="header-info">
+                            <h2>LAWSON</h2>
+                            <p>ITC Depok - Depok</p>
+                        </div>
+                    </div>
+                    <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                </div>
+
+                <!-- Content Container -->
+                <div class="content" id="content">
+                    <!-- Dashboard Tab -->
+                    <div id="dashboardTab" class="tab-content active">
+                        <!-- Desktop Grid Layout -->
+                        <div class="desktop-grid" id="desktopGrid">
+                            <!-- Welcome Card -->
+                            <div class="card">
+                                <div class="welcome-section">
+                                    <div class="avatar">
+                                        <span>BS</span>
+                                    </div>
+                                    <div class="welcome-info">
+                                        <h3>Selamat Pagi, Budi Santoso</h3>
+                                        <p>Shift Hari Ini: 08:00 - 16:00 WIB</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-bolt"></i> Aksi Cepat</h3>
+                                </div>
+                                <div class="action-list">
+                                    <button class="action-item" onclick="showAddShiftModal()">
+                                        <span><i class="fas fa-exchange-alt" style="margin-right: 0.75rem; color: #3b82f6;"></i>Request Perubahan</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                    <button class="action-item" onclick="showSwapShiftModal()">
+                                        <span><i class="fas fa-sync-alt" style="margin-right: 0.75rem; color: #f59e0b;"></i>Tukar Shift</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Stats Grid - Full Width -->
+                            <div class="desktop-grid-full">
+                                <div class="stats-grid desktop-stats">
+                                    <div class="stat-card">
+                                        <i class="fas fa-clock"></i>
+                                        <div class="stat-number">42</div>
+                                        <div class="stat-label">Jam Kerja Minggu Ini</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <i class="fas fa-users"></i>
+                                        <div class="stat-number">6</div>
+                                        <div class="stat-label">Total Karyawan Aktif</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <div class="stat-number">95%</div>
+                                        <div class="stat-label">Tingkat Kehadiran</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <i class="fas fa-clock-rotate-left"></i>
+                                        <div class="stat-number">3</div>
+                                        <div class="stat-label">Overtime Bulan Ini</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Today's Schedule - Full Width -->
+                            <div class="desktop-grid-full">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-calendar-days"></i> Jadwal Hari Ini</h3>
+                                        <div class="badge primary">3 Karyawan</div>
+                                    </div>
+                                    <div class="schedule-list">
+                                        <!-- Schedule items will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Layout -->
+                        <div id="mobileLayout">
+                            <!-- Welcome Card -->
+                            <div class="card">
+                                <div class="welcome-section">
+                                    <div class="avatar">
+                                        <span>BS</span>
+                                    </div>
+                                    <div class="welcome-info">
+                                        <h3>Selamat Pagi, Budi Santoso</h3>
+                                        <p>Shift Hari Ini: 08:00 - 16:00 WIB</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Stats -->
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <i class="fas fa-clock"></i>
+                                    <div class="stat-number">42</div>
+                                    <div class="stat-label">Jam Kerja Minggu Ini</div>
+                                </div>
+                                <div class="stat-card">
+                                    <i class="fas fa-users"></i>
+                                    <div class="stat-number">6</div>
+                                    <div class="stat-label">Total Karyawan Aktif</div>
+                                </div>
+                            </div>
+
+                            <!-- Today's Schedule -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-calendar-days"></i> Jadwal Hari Ini</h3>
+                                    <div class="badge primary">3 Karyawan</div>
+                                </div>
+                                <div class="schedule-list">
+                                    <!-- Schedule items will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-bolt"></i> Aksi Cepat</h3>
+                                </div>
+                                <div class="action-list">
+                                    <button class="action-item" onclick="showAddShiftModal()">
+                                        <span><i class="fas fa-exchange-alt" style="margin-right: 0.75rem; color: #3b82f6;"></i>Request Perubahan Jadwal</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                    <button class="action-item" onclick="switchTab('schedule')">
+                                        <span><i class="fas fa-calendar-week" style="margin-right: 0.75rem; color: #10b981;"></i>Lihat Jadwal Mingguan</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                    <button class="action-item" onclick="showSwapShiftModal()">
+                                        <span><i class="fas fa-sync-alt" style="margin-right: 0.75rem; color: #f59e0b;"></i>Tukar Shift dengan Rekan</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                    <button class="action-item" onclick="switchTab('reports')">
+                                        <span><i class="fas fa-chart-line" style="margin-right: 0.75rem; color: #8b5cf6;"></i>Lihat Laporan Kehadiran</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Tab -->
+                    <div id="scheduleTab" class="tab-content">
+                        <!-- Calendar Controls -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-calendar-alt"></i> <span id="monthYearLabel">Januari 2024</span></h3>
+                                <div class="calendar-controls">
+                                    <button class="btn-outline" id="prevMonth">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="btn-outline" id="nextMonth">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Employee Filter -->
+                            <div class="filter-section">
+                                <label for="employeeFilter">Tampilkan Jadwal:</label>
+                                <select id="employeeFilter">
+                                    <option value="current">Jadwal Saya</option>
+                                </select>
+                            </div>
+                            
+                            <div class="calendar-grid">
+                                <div class="calendar-header">
+                                    <div>Sen</div>
+                                    <div>Sel</div>
+                                    <div>Rab</div>
+                                    <div>Kam</div>
+                                    <div>Jum</div>
+                                    <div>Sab</div>
+                                    <div>Min</div>
+                                </div>
+                                <div class="calendar-dates">
+                                    <!-- Calendar dates will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Schedule Details -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-list-alt"></i> Detail Jadwal Kerja</h3>
+                                <div class="badge active">7 Hari</div>
+                            </div>
+                            <div class="schedule-details">
+                                <!-- Schedule details will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employees Tab -->
+                    <div id="employeesTab" class="tab-content">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-users"></i> Daftar Karyawan</h3>
+                                <div class="badge primary">6 Karyawan</div>
+                            </div>
+                            <div class="employees-grid" id="employeesGrid">
+                                <!-- Employee cards will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Tab -->
+                    <div id="reportsTab" class="tab-content">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-line"></i> Laporan & Analitik</h3>
+                            </div>
+                            <div class="reports-content" id="reportsContent">
+                                <!-- Reports content will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Tab -->
+                    <div id="profileTab" class="tab-content">
+                        <!-- Profile Header -->
+                        <div class="card">
+                            <div class="profile-header">
+                                <div class="avatar large">BS</div>
+                                <h3>Budi Santoso</h3>
+                                <p>ID Karyawan: ADM01</p>
+                                <div class="location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ITC Depok - Depok
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Info -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-id-card"></i> Informasi Karyawan</h3>
+                            </div>
+                            <div class="profile-info">
+                                <div class="info-row">
+                                    <span>Posisi Jabatan</span>
+                                    <span>Kasir Senior</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Departemen</span>
+                                    <span>Front Store Operations</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Tanggal Bergabung</span>
+                                    <span>15 Maret 2020</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Status Karyawan</span>
+                                    <div class="badge active">Aktif</div>
+                                </div>
+                                <div class="info-row">
+                                    <span>Jam Kerja/Minggu</span>
+                                    <span>40 Jam</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Rating Performa</span>
+                                    <span>⭐⭐⭐⭐⭐ (4.8/5.0)</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Email</span>
+                                    <span>budi.santoso@lawson.id</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Telepon</span>
+                                    <span>081234567890</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Settings -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-cog"></i> Pengaturan Akun</h3>
+                            </div>
+                            <div class="settings-list">
+                                <button class="setting-item" data-setting="notifications">
+                                    <span><i class="fas fa-bell" style="margin-right: 0.75rem; color: #3b82f6;"></i>Pengaturan Notifikasi</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <button class="setting-item" data-setting="password">
+                                    <span><i class="fas fa-lock" style="margin-right: 0.75rem; color: #10b981;"></i>Ubah Password</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <button class="setting-item" data-setting="language">
+                                    <span><i class="fas fa-language" style="margin-right: 0.75rem; color: #f59e0b;"></i>Bahasa & Region</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <button class="setting-item" data-setting="help">
+                                    <span><i class="fas fa-question-circle" style="margin-right: 0.75rem; color: #8b5cf6;"></i>Bantuan & Dukungan</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <button class="btn-danger" id="logoutButton">
+                                    <i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;"></i>
+                                    Keluar dari Akun
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation - Mobile Only -->
+        <div class="bottom-nav" id="bottomNav">
+            <button class="nav-item active" data-tab="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Beranda</span>
+            </button>
+            <button class="nav-item" data-tab="schedule">
+                <i class="fas fa-calendar"></i>
+                <span>Jadwal</span>
+            </button>
+            <button class="nav-item" data-tab="profile">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>
