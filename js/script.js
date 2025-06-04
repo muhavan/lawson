@@ -49,17 +49,17 @@ function initializeData() {
     },
     {
       id: "ADM02",
-      name: "Angga Candra",
-      gender: "male",
+      name: "Dida Fatmawati",
+      gender: "female",
       position: "Supervisor",
       department: "Store Management",
       store: "Toko ITC Depok - Depok",
       joinDate: "3 Januari 2019",
       status: "Aktif",
-      avatar: "AC",
+      avatar: "DF",
       contact: {
         phone: "081298765432",
-        email: "angga.candra@lawson.id",
+        email: "dida.fatmawati@lawson.id",
         address: "Jl. Cinere Raya No. 12, Depok",
       },
       performance: {
@@ -1908,16 +1908,46 @@ function loadDataFromStorage() {
   const savedChangeRequests = localStorage.getItem("lawsonShiftChangeRequests")
 
   if (savedSchedules) {
-    Object.assign(schedules, JSON.parse(savedSchedules))
+    const parsedSchedules = JSON.parse(savedSchedules)
+    // Convert date strings back to Date objects
+    Object.keys(parsedSchedules).forEach((employeeId) => {
+      parsedSchedules[employeeId].forEach((schedule) => {
+        schedule.date = new Date(schedule.date)
+      })
+    })
+    Object.assign(schedules, parsedSchedules)
   }
+
   if (savedNotifications) {
-    notifications = JSON.parse(savedNotifications)
+    const parsedNotifications = JSON.parse(savedNotifications)
+    // Convert date strings back to Date objects
+    parsedNotifications.forEach((notification) => {
+      notification.date = new Date(notification.date)
+    })
+    notifications = parsedNotifications
   }
+
   if (savedSwapRequests) {
-    shiftSwapRequests = JSON.parse(savedSwapRequests)
+    const parsedSwapRequests = JSON.parse(savedSwapRequests)
+    // Convert date strings back to Date objects
+    parsedSwapRequests.forEach((request) => {
+      if (request.createdAt) request.createdAt = new Date(request.createdAt)
+      if (request.requesterDate) request.requesterDate = new Date(request.requesterDate)
+      if (request.targetDate) request.targetDate = new Date(request.targetDate)
+      if (request.approvedDate) request.approvedDate = new Date(request.approvedDate)
+    })
+    shiftSwapRequests = parsedSwapRequests
   }
+
   if (savedChangeRequests) {
-    window.shiftChangeRequests = JSON.parse(savedChangeRequests)
+    const parsedChangeRequests = JSON.parse(savedChangeRequests)
+    // Convert date strings back to Date objects
+    parsedChangeRequests.forEach((request) => {
+      if (request.requestDate) request.requestDate = new Date(request.requestDate)
+      if (request.shiftDate) request.shiftDate = new Date(request.shiftDate)
+      if (request.approvedDate) request.approvedDate = new Date(request.approvedDate)
+    })
+    window.shiftChangeRequests = parsedChangeRequests
   }
 }
 
@@ -2504,8 +2534,16 @@ function getNotificationIcon(type) {
 }
 
 function formatNotificationTime(date) {
+  // Pastikan date adalah objek Date
+  const notificationDate = date instanceof Date ? date : new Date(date)
+
+  // Validasi apakah date valid
+  if (isNaN(notificationDate.getTime())) {
+    return "Waktu tidak valid"
+  }
+
   const now = new Date()
-  const diff = now - date
+  const diff = now - notificationDate
   const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
@@ -2515,7 +2553,7 @@ function formatNotificationTime(date) {
   if (hours < 24) return `${hours} jam yang lalu`
   if (days < 7) return `${days} hari yang lalu`
 
-  return date.toLocaleDateString("id-ID")
+  return notificationDate.toLocaleDateString("id-ID")
 }
 
 function markAllNotificationsRead() {
