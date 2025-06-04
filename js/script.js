@@ -27,7 +27,7 @@ function initializeData() {
       gender: "male",
       position: "Kasir Senior",
       department: "Front Store Operations",
-      store: "ITC Depok - Depok",
+      store: "Toko ITC Depok - Depok",
       joinDate: "15 Maret 2020",
       status: "Aktif",
       avatar: "BS",
@@ -41,6 +41,11 @@ function initializeData() {
         attendance: 98,
         productivity: 95,
       },
+      preferences: {
+        preferredShifts: ["morning", "evening"],
+        unavailableDays: [0], // Sunday
+        maxConsecutiveDays: 5,
+      },
     },
     {
       id: "ADM02",
@@ -48,7 +53,7 @@ function initializeData() {
       gender: "male",
       position: "Supervisor",
       department: "Store Management",
-      store: "ITC Depok - Depok",
+      store: "Toko ITC Depok - Depok",
       joinDate: "3 Januari 2019",
       status: "Aktif",
       avatar: "AC",
@@ -62,6 +67,11 @@ function initializeData() {
         attendance: 99,
         productivity: 97,
       },
+      preferences: {
+        preferredShifts: ["evening", "night"],
+        unavailableDays: [6], // Saturday
+        maxConsecutiveDays: 6,
+      },
     },
     {
       id: "ADM03",
@@ -69,7 +79,7 @@ function initializeData() {
       gender: "male",
       position: "Stock Keeper",
       department: "Inventory Management",
-      store: "ITC Depok - Depok",
+      store: "Toko ITC Depok - Depok",
       joinDate: "20 April 2021",
       status: "Aktif",
       avatar: "AR",
@@ -83,26 +93,36 @@ function initializeData() {
         attendance: 95,
         productivity: 92,
       },
+      preferences: {
+        preferredShifts: ["night", "morning"],
+        unavailableDays: [5], // Friday
+        maxConsecutiveDays: 4,
+      },
     },
     {
       id: "ADM04",
-      name: "Anya Geraldine",
+      name: "Siti Nurhaliza",
       gender: "female",
       position: "Kasir",
       department: "Front Store Operations",
-      store: "ITC Depok - Depok",
+      store: "Toko ITC Depok - Depok",
       joinDate: "10 Juni 2022",
       status: "Aktif",
-      avatar: "AG",
+      avatar: "SN",
       contact: {
         phone: "081512345678",
-        email: "anya.geraldine@lawson.id",
+        email: "siti.nurhaliza@lawson.id",
         address: "Jl. Lenteng Agung No. 56, Jakarta Selatan",
       },
       performance: {
         rating: 4.6,
         attendance: 97,
         productivity: 94,
+      },
+      preferences: {
+        preferredShifts: ["morning", "evening"],
+        unavailableDays: [0, 6], // Sunday, Saturday
+        maxConsecutiveDays: 5,
       },
     },
     {
@@ -111,7 +131,7 @@ function initializeData() {
       gender: "male",
       position: "Maintenance Staff",
       department: "Facilities Management",
-      store: "ITC Depok - Depok",
+      store: "Toko ITC Depok - Depok",
       joinDate: "5 Februari 2021",
       status: "Aktif",
       avatar: "RH",
@@ -125,6 +145,11 @@ function initializeData() {
         attendance: 92,
         productivity: 90,
       },
+      preferences: {
+        preferredShifts: ["morning", "night"],
+        unavailableDays: [1], // Monday
+        maxConsecutiveDays: 6,
+      },
     },
     {
       id: "ADM06",
@@ -132,7 +157,7 @@ function initializeData() {
       gender: "female",
       position: "Customer Service",
       department: "Front Store Operations",
-      store: "ITC Depok - Depok",
+      store: "Toko ITC Depok - Depok",
       joinDate: "15 September 2022",
       status: "Aktif",
       avatar: "DL",
@@ -146,64 +171,19 @@ function initializeData() {
         attendance: 96,
         productivity: 93,
       },
+      preferences: {
+        preferredShifts: ["evening", "morning"],
+        unavailableDays: [2], // Tuesday
+        maxConsecutiveDays: 5,
+      },
     },
   ]
 
-  // Generate schedules for the current month
+  // Generate fair schedules using improved algorithm
+  generateFairSchedules()
+
+  // Initialize notifications with more realistic data
   const today = new Date()
-  const currentMonth = today.getMonth()
-  const currentYear = today.getFullYear()
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
-
-  // Shift types
-  const shifts = [
-    { type: "morning", label: "08:00-16:00", class: "primary" },
-    { type: "evening", label: "16:00-24:00", class: "secondary" },
-    { type: "night", label: "00:00-08:00", class: "night" },
-    { type: "off", label: "OFF", class: "off" },
-  ]
-
-  // Generate schedules for each employee
-  employees.forEach((employee) => {
-    schedules[employee.id] = []
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(currentYear, currentMonth, day)
-
-      // Assign shifts based on patterns (you can customize this logic)
-      let shiftIndex
-      if (employee.id === "ADM01") {
-        // Budi's pattern: 2 morning, 1 off, 2 evening, 1 off, repeat
-        const cycle = day % 6
-        if (cycle === 1 || cycle === 2) shiftIndex = 0
-        else if (cycle === 3) shiftIndex = 3
-        else if (cycle === 4 || cycle === 5) shiftIndex = 1
-        else shiftIndex = 3
-      } else if (employee.id === "ADM02") {
-        // Dida's pattern (supervisor): mostly evening with weekends off
-        if (date.getDay() === 0 || date.getDay() === 6)
-          shiftIndex = 3 // Weekend off
-        else shiftIndex = 1 // Evening shift
-      } else {
-        // Random shift for other employees, but ensure days off are distributed
-        if (day % 7 === employee.id.charCodeAt(4) % 7) {
-          shiftIndex = 3 // Day off
-        } else {
-          shiftIndex = Math.floor(Math.random() * 3) // Random shift (excluding off)
-        }
-      }
-
-      const shift = shifts[shiftIndex]
-      schedules[employee.id].push({
-        date: new Date(currentYear, currentMonth, day),
-        shift: shift.type,
-        label: shift.label,
-        class: shift.class,
-      })
-    }
-  })
-
-  // Initialize notifications
   notifications = [
     {
       id: 1,
@@ -217,7 +197,7 @@ function initializeData() {
       id: 2,
       type: "success",
       title: "Permintaan Disetujui",
-      message: "Permintaan tukar shift dengan Anya Geraldine telah disetujui",
+      message: "Permintaan tukar shift dengan Siti Nurhaliza telah disetujui",
       date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3),
       read: true,
     },
@@ -231,23 +211,195 @@ function initializeData() {
     },
   ]
 
-  // Initialize shift swap requests
-  shiftSwapRequests = [
-    {
-      id: 1,
-      requesterId: "ADM01",
-      targetId: "ADM04",
-      requesterDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2),
-      targetDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4),
-      status: "pending",
-      createdAt: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
-    },
+  // Initialize shift swap requests with proper data structure
+  shiftSwapRequests = []
+
+  // Initialize shift change requests
+  window.shiftChangeRequests = []
+
+  // Save initial data to localStorage
+  saveDataToStorage()
+}
+
+// Fair scheduling algorithm
+function generateFairSchedules() {
+  const today = new Date()
+  const currentMonth = today.getMonth()
+  const currentYear = today.getFullYear()
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
+
+  // Shift types with requirements
+  const shifts = [
+    { type: "morning", label: "08:00-16:00", class: "primary", minStaff: 2, maxStaff: 3 },
+    { type: "evening", label: "16:00-24:00", class: "secondary", minStaff: 2, maxStaff: 3 },
+    { type: "night", label: "00:00-08:00", class: "night", minStaff: 1, maxStaff: 2 },
+    { type: "off", label: "OFF", class: "off", minStaff: 0, maxStaff: 6 },
   ]
+
+  // Initialize schedules
+  employees.forEach((employee) => {
+    schedules[employee.id] = []
+  })
+
+  // Track employee work statistics
+  const employeeStats = {}
+  employees.forEach((employee) => {
+    employeeStats[employee.id] = {
+      totalShifts: 0,
+      consecutiveDays: 0,
+      lastShift: null,
+      shiftCounts: { morning: 0, evening: 0, night: 0, off: 0 },
+      weeklyHours: 0,
+    }
+  })
+
+  // Generate schedule day by day
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(currentYear, currentMonth, day)
+    const dayOfWeek = date.getDay()
+
+    // Determine daily shift requirements
+    const dailyRequirements = {
+      morning: dayOfWeek === 0 || dayOfWeek === 6 ? 2 : 3, // Weekend: 2, Weekday: 3
+      evening: dayOfWeek === 0 || dayOfWeek === 6 ? 2 : 3,
+      night: 1,
+    }
+
+    // Assign shifts for this day
+    const dayAssignments = assignDailyShifts(date, dailyRequirements, employeeStats)
+
+    // Update employee schedules and stats
+    dayAssignments.forEach((assignment) => {
+      const shift = shifts.find((s) => s.type === assignment.shift)
+      schedules[assignment.employeeId].push({
+        date: new Date(date),
+        shift: assignment.shift,
+        label: shift.label,
+        class: shift.class,
+      })
+
+      // Update stats
+      const stats = employeeStats[assignment.employeeId]
+      stats.shiftCounts[assignment.shift]++
+      if (assignment.shift !== "off") {
+        stats.totalShifts++
+        stats.consecutiveDays++
+        stats.weeklyHours += 8
+      } else {
+        stats.consecutiveDays = 0
+      }
+      stats.lastShift = assignment.shift
+    })
+
+    // Reset weekly hours every Sunday
+    if (dayOfWeek === 0) {
+      Object.values(employeeStats).forEach((stats) => {
+        stats.weeklyHours = 0
+      })
+    }
+  }
+}
+
+function assignDailyShifts(date, requirements, employeeStats) {
+  const dayOfWeek = date.getDay()
+  const assignments = []
+  const availableEmployees = [...employees]
+
+  // Sort employees by priority (least worked, preferences, etc.)
+  availableEmployees.sort((a, b) => {
+    const statsA = employeeStats[a.id]
+    const statsB = employeeStats[b.id]
+
+    // Priority factors
+    const workloadA = statsA.totalShifts + statsA.consecutiveDays * 0.5
+    const workloadB = statsB.totalShifts + statsB.consecutiveDays * 0.5
+
+    return workloadA - workloadB
+  })
+
+  // Assign morning shifts
+  const morningStaff = assignShiftType("morning", requirements.morning, availableEmployees, dayOfWeek, employeeStats)
+  morningStaff.forEach((emp) => {
+    assignments.push({ employeeId: emp.id, shift: "morning" })
+    availableEmployees.splice(
+      availableEmployees.findIndex((e) => e.id === emp.id),
+      1,
+    )
+  })
+
+  // Assign evening shifts
+  const eveningStaff = assignShiftType("evening", requirements.evening, availableEmployees, dayOfWeek, employeeStats)
+  eveningStaff.forEach((emp) => {
+    assignments.push({ employeeId: emp.id, shift: "evening" })
+    availableEmployees.splice(
+      availableEmployees.findIndex((e) => e.id === emp.id),
+      1,
+    )
+  })
+
+  // Assign night shifts
+  const nightStaff = assignShiftType("night", requirements.night, availableEmployees, dayOfWeek, employeeStats)
+  nightStaff.forEach((emp) => {
+    assignments.push({ employeeId: emp.id, shift: "night" })
+    availableEmployees.splice(
+      availableEmployees.findIndex((e) => e.id === emp.id),
+      1,
+    )
+  })
+
+  // Assign remaining employees to off
+  availableEmployees.forEach((emp) => {
+    assignments.push({ employeeId: emp.id, shift: "off" })
+  })
+
+  return assignments
+}
+
+function assignShiftType(shiftType, required, availableEmployees, dayOfWeek, employeeStats) {
+  const assigned = []
+  const candidates = availableEmployees.filter((emp) => {
+    const stats = employeeStats[emp.id]
+    const prefs = emp.preferences
+
+    // Check availability
+    if (prefs.unavailableDays.includes(dayOfWeek)) return false
+
+    // Check consecutive days limit
+    if (stats.consecutiveDays >= prefs.maxConsecutiveDays) return false
+
+    // Check weekly hours limit (max 40 hours)
+    if (stats.weeklyHours >= 40) return false
+
+    return true
+  })
+
+  // Sort candidates by preference and workload
+  candidates.sort((a, b) => {
+    const statsA = employeeStats[a.id]
+    const statsB = employeeStats[b.id]
+
+    const prefA = a.preferences.preferredShifts.includes(shiftType) ? 1 : 0
+    const prefB = b.preferences.preferredShifts.includes(shiftType) ? 1 : 0
+
+    if (prefA !== prefB) return prefB - prefA
+
+    return statsA.totalShifts - statsB.totalShifts
+  })
+
+  // Assign required number of staff
+  for (let i = 0; i < Math.min(required, candidates.length); i++) {
+    assigned.push(candidates[i])
+  }
+
+  return assigned
 }
 
 function initializeApp() {
   // Setup event listeners
   setupEventListeners()
+
+  // Load saved data
+  loadDataFromStorage()
 
   // Check if user is already logged in (from localStorage)
   const savedUser = localStorage.getItem("lawsonUser")
@@ -348,29 +500,11 @@ function setupEventListeners() {
     })
   })
 
-  // Notification icon click
-  const notificationIcons = document.querySelectorAll(".notification-icon")
-  notificationIcons.forEach((icon) => {
-    icon.addEventListener("click", toggleNotifications)
-  })
-
   // Month navigation in calendar
   const prevMonthBtn = document.getElementById("prevMonth")
   const nextMonthBtn = document.getElementById("nextMonth")
   if (prevMonthBtn) prevMonthBtn.addEventListener("click", () => changeMonth(-1))
   if (nextMonthBtn) nextMonthBtn.addEventListener("click", () => changeMonth(1))
-
-  // Add shift button
-  const addShiftBtn = document.getElementById("addShiftBtn")
-  if (addShiftBtn) {
-    addShiftBtn.addEventListener("click", showAddShiftModal)
-  }
-
-  // Request shift swap button
-  const requestSwapBtn = document.getElementById("requestSwapBtn")
-  if (requestSwapBtn) {
-    requestSwapBtn.addEventListener("click", showSwapShiftModal)
-  }
 
   // Employee filter in schedule
   const employeeFilter = document.getElementById("employeeFilter")
@@ -384,6 +518,23 @@ function setupEventListeners() {
     item.addEventListener("click", function () {
       const settingType = this.getAttribute("data-setting")
       handleSetting(settingType)
+    })
+  })
+}
+
+// Setup notification listeners after main app is shown
+function setupNotificationListeners() {
+  // Notification icon click - setup after elements are available
+  const notificationIcons = document.querySelectorAll(".notification-icon")
+  console.log("Found notification icons:", notificationIcons.length)
+
+  notificationIcons.forEach((icon, index) => {
+    console.log(`Setting up listener for notification icon ${index}`)
+    icon.addEventListener("click", (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      console.log("Notification icon clicked!")
+      toggleNotifications()
     })
   })
 }
@@ -436,6 +587,11 @@ function showMainApp() {
   updateUserInfo()
   loadDashboard()
   switchTab("dashboard")
+
+  // Setup notification listeners after DOM is ready
+  setTimeout(() => {
+    setupNotificationListeners()
+  }, 100)
 }
 
 // Update user information across the app
@@ -1737,47 +1893,132 @@ function closeModal(modal) {
   }, 300)
 }
 
+// Data persistence functions
+function saveDataToStorage() {
+  localStorage.setItem("lawsonSchedules", JSON.stringify(schedules))
+  localStorage.setItem("lawsonNotifications", JSON.stringify(notifications))
+  localStorage.setItem("lawsonShiftSwapRequests", JSON.stringify(shiftSwapRequests))
+  localStorage.setItem("lawsonShiftChangeRequests", JSON.stringify(window.shiftChangeRequests || []))
+}
+
+function loadDataFromStorage() {
+  const savedSchedules = localStorage.getItem("lawsonSchedules")
+  const savedNotifications = localStorage.getItem("lawsonNotifications")
+  const savedSwapRequests = localStorage.getItem("lawsonShiftSwapRequests")
+  const savedChangeRequests = localStorage.getItem("lawsonShiftChangeRequests")
+
+  if (savedSchedules) {
+    Object.assign(schedules, JSON.parse(savedSchedules))
+  }
+  if (savedNotifications) {
+    notifications = JSON.parse(savedNotifications)
+  }
+  if (savedSwapRequests) {
+    shiftSwapRequests = JSON.parse(savedSwapRequests)
+  }
+  if (savedChangeRequests) {
+    window.shiftChangeRequests = JSON.parse(savedChangeRequests)
+  }
+}
+
+// Enhanced shift change request processing
 function processShiftChangeRequest(shiftDate, shiftType, shiftReason) {
-  // In a real app, this would be sent to a server
-  console.log("Shift change request:", { shiftDate, shiftType, shiftReason })
+  const request = {
+    id: (window.shiftChangeRequests?.length || 0) + 1,
+    employeeId: currentUser.id,
+    employeeName: currentUser.name,
+    requestDate: new Date(),
+    shiftDate: new Date(shiftDate),
+    currentShift: getCurrentShiftForDate(currentUser.id, new Date(shiftDate)),
+    requestedShift: shiftType,
+    reason: shiftReason,
+    status: "pending",
+    approvedBy: null,
+    approvedDate: null,
+  }
+
+  if (!window.shiftChangeRequests) {
+    window.shiftChangeRequests = []
+  }
+  window.shiftChangeRequests.push(request)
 
   // Add notification
   const notification = {
     id: notifications.length + 1,
     type: "info",
     title: "Request Dikirim",
-    message: `Request perubahan jadwal untuk tanggal ${shiftDate} telah dikirim`,
+    message: `Request perubahan jadwal untuk tanggal ${formatDate(new Date(shiftDate))} telah dikirim`,
     date: new Date(),
     read: false,
   }
 
   notifications.unshift(notification)
   updateNotificationBadge()
+  saveDataToStorage()
+
+  // Auto-approve for demo (in real app, this would go to supervisor)
+  setTimeout(() => {
+    approveShiftChangeRequest(request.id)
+  }, 2000)
 
   showAlert("Request perubahan jadwal berhasil dikirim!", "success")
 }
 
-function processShiftSwapRequest(targetEmployeeId, targetDate, myDate, swapReason) {
-  // In a real app, this would be sent to a server
-  console.log("Shift swap request:", { targetEmployeeId, targetDate, myDate, swapReason })
+function approveShiftChangeRequest(requestId) {
+  const request = window.shiftChangeRequests?.find((r) => r.id === requestId)
+  if (!request) return
 
+  request.status = "approved"
+  request.approvedBy = "Supervisor"
+  request.approvedDate = new Date()
+
+  // Update the actual schedule
+  updateEmployeeSchedule(request.employeeId, request.shiftDate, request.requestedShift)
+
+  // Add approval notification
+  const notification = {
+    id: notifications.length + 1,
+    type: "success",
+    title: "Request Disetujui",
+    message: `Request perubahan jadwal Anda untuk tanggal ${formatDate(request.shiftDate)} telah disetujui`,
+    date: new Date(),
+    read: false,
+  }
+
+  notifications.unshift(notification)
+  updateNotificationBadge()
+  saveDataToStorage()
+
+  // Refresh current view if needed
+  if (currentTab === "schedule") {
+    loadSchedule()
+  }
+}
+
+// Enhanced shift swap request processing
+function processShiftSwapRequest(targetEmployeeId, targetDate, myDate, swapReason) {
   const targetEmployee = employees.find((emp) => emp.id === targetEmployeeId)
 
-  // Add to shift swap requests
-  const swapRequest = {
+  const request = {
     id: shiftSwapRequests.length + 1,
     requesterId: currentUser.id,
+    requesterName: currentUser.name,
     targetId: targetEmployeeId,
+    targetName: targetEmployee.name,
     requesterDate: new Date(myDate),
     targetDate: new Date(targetDate),
+    requesterShift: getCurrentShiftForDate(currentUser.id, new Date(myDate)),
+    targetShift: getCurrentShiftForDate(targetEmployeeId, new Date(targetDate)),
     reason: swapReason,
     status: "pending",
     createdAt: new Date(),
+    approvedBy: null,
+    approvedDate: null,
   }
 
-  shiftSwapRequests.push(swapRequest)
+  shiftSwapRequests.push(request)
 
-  // Add notification
+  // Add notification for requester
   const notification = {
     id: notifications.length + 1,
     type: "info",
@@ -1789,25 +2030,381 @@ function processShiftSwapRequest(targetEmployeeId, targetDate, myDate, swapReaso
 
   notifications.unshift(notification)
   updateNotificationBadge()
+  saveDataToStorage()
+
+  // Auto-approve for demo (in real app, target employee would approve)
+  setTimeout(() => {
+    approveShiftSwapRequest(request.id)
+  }, 3000)
 
   showAlert(`Request tukar shift dengan ${targetEmployee.name} berhasil dikirim!`, "success")
 }
 
-// Notification functions
-function toggleNotifications() {
-  // Create or toggle notification panel
-  const notificationPanel = document.getElementById("notificationPanel")
+function approveShiftSwapRequest(requestId) {
+  const request = shiftSwapRequests.find((r) => r.id === requestId)
+  if (!request) return
 
-  if (notificationPanel) {
-    // Toggle existing panel
-    notificationPanel.classList.toggle("show")
-  } else {
-    // Create new panel
-    createNotificationPanel()
+  request.status = "approved"
+  request.approvedBy = request.targetName
+  request.approvedDate = new Date()
+
+  // Swap the shifts in the schedule
+  swapEmployeeShifts(request.requesterId, request.requesterDate, request.targetId, request.targetDate)
+
+  // Add approval notification
+  const notification = {
+    id: notifications.length + 1,
+    type: "success",
+    title: "Tukar Shift Disetujui",
+    message: `Tukar shift dengan ${request.targetName} telah disetujui`,
+    date: new Date(),
+    read: false,
+  }
+
+  notifications.unshift(notification)
+  updateNotificationBadge()
+  saveDataToStorage()
+
+  // Refresh current view if needed
+  if (currentTab === "schedule") {
+    loadSchedule()
   }
 }
 
+// Helper functions
+function getCurrentShiftForDate(employeeId, date) {
+  const employeeSchedule = schedules[employeeId] || []
+  const daySchedule = employeeSchedule.find((schedule) => {
+    const scheduleDate = new Date(schedule.date)
+    return (
+      scheduleDate.getDate() === date.getDate() &&
+      scheduleDate.getMonth() === date.getMonth() &&
+      scheduleDate.getFullYear() === date.getFullYear()
+    )
+  })
+  return daySchedule ? daySchedule.shift : "off"
+}
+
+function updateEmployeeSchedule(employeeId, date, newShift) {
+  const employeeSchedule = schedules[employeeId] || []
+  const scheduleIndex = employeeSchedule.findIndex((schedule) => {
+    const scheduleDate = new Date(schedule.date)
+    return (
+      scheduleDate.getDate() === date.getDate() &&
+      scheduleDate.getMonth() === date.getMonth() &&
+      scheduleDate.getFullYear() === date.getFullYear()
+    )
+  })
+
+  if (scheduleIndex !== -1) {
+    const shifts = [
+      { type: "morning", label: "08:00-16:00", class: "primary" },
+      { type: "evening", label: "16:00-24:00", class: "secondary" },
+      { type: "night", label: "00:00-08:00", class: "night" },
+      { type: "off", label: "OFF", class: "off" },
+    ]
+
+    const shift = shifts.find((s) => s.type === newShift)
+    employeeSchedule[scheduleIndex] = {
+      date: new Date(date),
+      shift: newShift,
+      label: shift.label,
+      class: shift.class,
+    }
+  }
+}
+
+function swapEmployeeShifts(emp1Id, date1, emp2Id, date2) {
+  const emp1Shift = getCurrentShiftForDate(emp1Id, date1)
+  const emp2Shift = getCurrentShiftForDate(emp2Id, date2)
+
+  updateEmployeeSchedule(emp1Id, date1, emp2Shift)
+  updateEmployeeSchedule(emp2Id, date2, emp1Shift)
+}
+
+function formatDate(date) {
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }
+  return date.toLocaleDateString("id-ID", options)
+}
+
+// Enhanced reports functionality
+function loadReports() {
+  console.log("Loading reports...")
+  const reportsContent = document.getElementById("reportsContent")
+  if (!reportsContent) return
+
+  reportsContent.innerHTML = `
+    <div class="reports-grid">
+      <div class="report-card">
+        <div class="report-header">
+          <h4><i class="fas fa-chart-bar"></i> Statistik Kehadiran</h4>
+        </div>
+        <div class="report-content">
+          ${generateAttendanceReport()}
+        </div>
+      </div>
+      
+      <div class="report-card">
+        <div class="report-header">
+          <h4><i class="fas fa-clock"></i> Distribusi Shift</h4>
+        </div>
+        <div class="report-content">
+          ${generateShiftDistributionReport()}
+        </div>
+      </div>
+      
+      <div class="report-card">
+        <div class="report-header">
+          <h4><i class="fas fa-exchange-alt"></i> Request & Tukar Shift</h4>
+        </div>
+        <div class="report-content">
+          ${generateRequestsReport()}
+        </div>
+      </div>
+      
+      <div class="report-card">
+        <div class="report-header">
+          <h4><i class="fas fa-users"></i> Performa Karyawan</h4>
+        </div>
+        <div class="report-content">
+          ${generatePerformanceReport()}
+        </div>
+      </div>
+    </div>
+  `
+}
+
+function generateAttendanceReport() {
+  const today = new Date()
+  const currentMonth = today.getMonth()
+  const currentYear = today.getFullYear()
+
+  let html = '<div class="attendance-stats">'
+
+  employees.forEach((employee) => {
+    const employeeSchedule = schedules[employee.id] || []
+    const monthSchedule = employeeSchedule.filter((schedule) => {
+      const scheduleDate = new Date(schedule.date)
+      return scheduleDate.getMonth() === currentMonth && scheduleDate.getFullYear() === currentYear
+    })
+
+    const workDays = monthSchedule.filter((s) => s.shift !== "off").length
+    const totalDays = monthSchedule.length
+    const attendanceRate = totalDays > 0 ? Math.round((workDays / totalDays) * 100) : 0
+
+    html += `
+      <div class="employee-attendance">
+        <div class="employee-info">
+          <div class="avatar small ${employee.gender === "female" ? "avatar-female" : "avatar-male"}">${employee.avatar}</div>
+          <div>
+            <div class="name">${employee.name}</div>
+            <div class="position">${employee.position}</div>
+          </div>
+        </div>
+        <div class="attendance-metrics">
+          <div class="metric">
+            <span class="metric-value">${workDays}</span>
+            <span class="metric-label">Hari Kerja</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">${attendanceRate}%</span>
+            <span class="metric-label">Kehadiran</span>
+          </div>
+        </div>
+      </div>
+    `
+  })
+
+  html += "</div>"
+  return html
+}
+
+function generateShiftDistributionReport() {
+  const shiftCounts = { morning: 0, evening: 0, night: 0, off: 0 }
+
+  employees.forEach((employee) => {
+    const employeeSchedule = schedules[employee.id] || []
+    employeeSchedule.forEach((schedule) => {
+      shiftCounts[schedule.shift]++
+    })
+  })
+
+  const total = Object.values(shiftCounts).reduce((a, b) => a + b, 0)
+
+  return `
+    <div class="shift-distribution">
+      <div class="shift-stat">
+        <div class="shift-info">
+          <span class="badge primary">Pagi (08:00-16:00)</span>
+        </div>
+        <div class="shift-count">
+          <span>${shiftCounts.morning}</span>
+          <small>${total > 0 ? Math.round((shiftCounts.morning / total) * 100) : 0}%</small>
+        </div>
+      </div>
+      <div class="shift-stat">
+        <div class="shift-info">
+          <span class="badge secondary">Sore (16:00-24:00)</span>
+        </div>
+        <div class="shift-count">
+          <span>${shiftCounts.evening}</span>
+          <small>${total > 0 ? Math.round((shiftCounts.evening / total) * 100) : 0}%</small>
+        </div>
+      </div>
+      <div class="shift-stat">
+        <div class="shift-info">
+          <span class="badge night">Malam (00:00-08:00)</span>
+        </div>
+        <div class="shift-count">
+          <span>${shiftCounts.night}</span>
+          <small>${total > 0 ? Math.round((shiftCounts.night / total) * 100) : 0}%</small>
+        </div>
+      </div>
+      <div class="shift-stat">
+        <div class="shift-info">
+          <span class="badge off">Libur</span>
+        </div>
+        <div class="shift-count">
+          <span>${shiftCounts.off}</span>
+          <small>${total > 0 ? Math.round((shiftCounts.off / total) * 100) : 0}%</small>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+function generateRequestsReport() {
+  const changeRequests = window.shiftChangeRequests || []
+  const swapRequests = shiftSwapRequests || []
+
+  const totalRequests = changeRequests.length + swapRequests.length
+  const approvedRequests =
+    changeRequests.filter((r) => r.status === "approved").length +
+    swapRequests.filter((r) => r.status === "approved").length
+  const pendingRequests = totalRequests - approvedRequests
+
+  return `
+    <div class="requests-summary">
+      <div class="request-stat">
+        <div class="stat-number">${totalRequests}</div>
+        <div class="stat-label">Total Request</div>
+      </div>
+      <div class="request-stat">
+        <div class="stat-number">${approvedRequests}</div>
+        <div class="stat-label">Disetujui</div>
+      </div>
+      <div class="request-stat">
+        <div class="stat-number">${pendingRequests}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+    
+    <div class="recent-requests">
+      <h5>Request Terbaru:</h5>
+      ${generateRecentRequestsList()}
+    </div>
+  `
+}
+
+function generateRecentRequestsList() {
+  const changeRequests = (window.shiftChangeRequests || []).map((r) => ({ ...r, type: "change" }))
+  const swapRequests = (shiftSwapRequests || []).map((r) => ({ ...r, type: "swap" }))
+
+  const allRequests = [...changeRequests, ...swapRequests]
+    .sort((a, b) => new Date(b.createdAt || b.requestDate) - new Date(a.createdAt || a.requestDate))
+    .slice(0, 5)
+
+  if (allRequests.length === 0) {
+    return '<p class="no-requests">Belum ada request</p>'
+  }
+
+  return allRequests
+    .map((request) => {
+      const date = new Date(request.createdAt || request.requestDate)
+      const statusClass = request.status === "approved" ? "success" : "warning"
+      const statusText = request.status === "approved" ? "Disetujui" : "Pending"
+
+      return `
+      <div class="request-item">
+        <div class="request-info">
+          <div class="request-title">
+            ${request.type === "change" ? "Perubahan Jadwal" : "Tukar Shift"}
+          </div>
+          <div class="request-details">
+            ${request.employeeName || request.requesterName} - ${formatDate(date)}
+          </div>
+        </div>
+        <div class="badge ${statusClass}">${statusText}</div>
+      </div>
+    `
+    })
+    .join("")
+}
+
+function generatePerformanceReport() {
+  return employees
+    .map((employee) => {
+      const rating = employee.performance?.rating || 4.5
+      const attendance = employee.performance?.attendance || 95
+      const productivity = employee.performance?.productivity || 90
+
+      return `
+      <div class="performance-item">
+        <div class="employee-info">
+          <div class="avatar small ${employee.gender === "female" ? "avatar-female" : "avatar-male"}">${employee.avatar}</div>
+          <div>
+            <div class="name">${employee.name}</div>
+            <div class="position">${employee.position}</div>
+          </div>
+        </div>
+        <div class="performance-metrics">
+          <div class="metric">
+            <span class="metric-value">⭐ ${rating}</span>
+            <span class="metric-label">Rating</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">${attendance}%</span>
+            <span class="metric-label">Kehadiran</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">${productivity}%</span>
+            <span class="metric-label">Produktivitas</span>
+          </div>
+        </div>
+      </div>
+    `
+    })
+    .join("")
+}
+
+// Notification functions
+function toggleNotifications() {
+  console.log("toggleNotifications called")
+
+  // Remove existing panel if it exists
+  const existingPanel = document.getElementById("notificationPanel")
+  if (existingPanel) {
+    console.log("Removing existing panel")
+    existingPanel.classList.remove("show")
+    setTimeout(() => {
+      existingPanel.remove()
+    }, 300)
+    return
+  }
+
+  // Create new panel
+  console.log("Creating new notification panel")
+  createNotificationPanel()
+}
+
 function createNotificationPanel() {
+  console.log("Creating notification panel with", notifications.length, "notifications")
+
   const panel = document.createElement("div")
   panel.className = "notification-panel"
   panel.id = "notificationPanel"
@@ -1818,9 +2415,11 @@ function createNotificationPanel() {
       <button class="mark-all-read">Tandai Semua Dibaca</button>
     </div>
     <div class="notification-list">
-      ${notifications
-        .map(
-          (notification) => `
+      ${
+        notifications.length > 0
+          ? notifications
+              .map(
+                (notification) => `
         <div class="notification-item ${notification.read ? "read" : "unread"}" data-id="${notification.id}">
           <div class="notification-icon ${notification.type}">
             <i class="fas ${getNotificationIcon(notification.type)}"></i>
@@ -1833,36 +2432,53 @@ function createNotificationPanel() {
           ${!notification.read ? '<div class="unread-dot"></div>' : ""}
         </div>
       `,
-        )
-        .join("")}
+              )
+              .join("")
+          : '<div class="no-notifications"><p>Tidak ada notifikasi</p></div>'
+      }
     </div>
   `
 
   document.body.appendChild(panel)
+  console.log("Panel added to body")
 
   // Show panel with animation
   setTimeout(() => {
     panel.classList.add("show")
+    console.log("Panel shown")
   }, 10)
 
   // Close panel when clicking outside
-  document.addEventListener("click", (e) => {
+  const closeHandler = (e) => {
     if (!panel.contains(e.target) && !e.target.closest(".notification-icon")) {
+      console.log("Clicking outside, closing panel")
       panel.classList.remove("show")
       setTimeout(() => {
         panel.remove()
+        document.removeEventListener("click", closeHandler)
       }, 300)
     }
-  })
+  }
+
+  // Add delay before enabling outside click
+  setTimeout(() => {
+    document.addEventListener("click", closeHandler)
+  }, 100)
 
   // Mark all as read button
   const markAllReadBtn = panel.querySelector(".mark-all-read")
-  markAllReadBtn.addEventListener("click", markAllNotificationsRead)
+  if (markAllReadBtn) {
+    markAllReadBtn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      markAllNotificationsRead()
+    })
+  }
 
   // Mark individual notifications as read when clicked
   const notificationItems = panel.querySelectorAll(".notification-item")
   notificationItems.forEach((item) => {
-    item.addEventListener("click", () => {
+    item.addEventListener("click", (e) => {
+      e.stopPropagation()
       const notificationId = Number.parseInt(item.getAttribute("data-id"))
       markNotificationRead(notificationId)
       item.classList.add("read")
@@ -2204,7 +2820,7 @@ function showHelpModal() {
         
         <div class="help-section">
           <h4>Versi Aplikasi</h4>
-          <p>LAWSON v2.1.0</p>
+          <p>LAWSON Premium v2.1.0</p>
         </div>
       </div>
     </div>
@@ -2482,9 +3098,4 @@ function showEmployeeDetails(employeeId) {
       closeModal(modal)
     }
   })
-}
-
-function loadReports() {
-  console.log("Reports tab loaded")
-  // Placeholder for loading reports and analytics
 }
